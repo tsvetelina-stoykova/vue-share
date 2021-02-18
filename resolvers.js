@@ -1,16 +1,18 @@
 module.exports = {
     Query: {
-      getUser: () => null
+      getPosts: async (_, args, { Post }) => {
+          const posts = await Post.find({}).sort({createdDate: 'desc'}).populate({path: 'createdBy', model: 'User'});
+          return posts;
+      }
     },
 
     // value of Mutation object takes 3 arguments:
     // root, typeDefs Mutation args, context
     Mutation: {
-        addPost: async (_, { title, imageUrl, categories, description, creatorId }, {Post}) => {
+        addPost: async (_, { title, imageUrl, description, creatorId }, { Post }) => {
           const newPost = await new Post({
               title,
               imageUrl,
-              categories,
               description,
               createdBy: creatorId
           }).save();
@@ -29,4 +31,4 @@ module.exports = {
             return newUser;
         }
     }
-}
+};
